@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import React, { useCallback, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 
 type TodoCardProps = {
@@ -12,12 +13,21 @@ function TodoCard({
     text,
 }: TodoCardProps) {
     const [status, setStatus] = useState<boolean>(checked);
+    const navigation = useNavigation();
+
+    const onPressTodoCard = useCallback(() => {
+        // @ts-ignore
+        navigation.navigate('todoModal', {
+            isEdit: true,
+            title: text,
+        });
+    }, [navigation, text]);
 
     return (
-        <View style={styles.container}>
+        <TouchableOpacity style={styles.container} onPress={onPressTodoCard}>
             <RadioButton color="royalblue" value="first" onPress={() => setStatus(!status)} status={status ? 'checked' : 'unchecked'} />
             <Text>{text}</Text>
-        </View>
+        </TouchableOpacity>
     );
 }
 

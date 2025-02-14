@@ -1,18 +1,52 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import TodoCard from '../components/todoCard';
-import ElevationButton from '../components/elevationButton';
+import { useNavigation } from '@react-navigation/native';
 import Icon from '@react-native-vector-icons/fontawesome6';
 
+// Import Component
+import TodoCard from '../components/todoCard';
+import ElevationButton from '../components/elevationButton';
+
+const todoList = [
+    {
+        isDone: false,
+        text: 'Task 1',
+        createdAt: '2024-01-01',
+    },
+    {
+        isDone: true,
+        text: 'Task 2',
+        createdAt: '2024-01-01',
+    },
+    {
+        isDone: false,
+        text: 'Task 3',
+        createdAt: '2024-01-29',
+    },
+];
+
 function HomeScreen() {
+    const [todo, _setTodo] = useState(todoList);
+    const navigation = useNavigation();
+
+    const onPressCreate = useCallback(() => {
+        // @ts-ignore
+        navigation.navigate('todoModal', {
+            isEdit: false,
+        });
+    }, [navigation]);
+
     return (
         <View style={styles.container}>
             <ScrollView style={styles.scrollViewStyle} contentContainerStyle={styles.scrollViewContainer} >
-                <TodoCard text="Task 1" />
-                <TodoCard text="Task 2" />
+                {
+                    todo.map((todoItem, i) => (
+                        <TodoCard text={todoItem.text} key={i} checked={todoItem.isDone} />
+                    ))
+                }
             </ScrollView>
 
-            <ElevationButton>
+            <ElevationButton onPress={onPressCreate}>
                 <Icon iconStyle="solid" name="plus" size={25} color={'black'} />
             </ElevationButton>
         </View>
