@@ -1,18 +1,61 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Directions, Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { TextInput } from 'react-native-paper';
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+// import { Dropdown } from 'react-native-element-dropdown';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
+// Components
+import CategoryPicker from './categoryPicker';
+
+// const data = [
+//     { label: 'Item 1', value: '1' },
+//     { label: 'Item 2', value: '2' },
+//     { label: 'Item 3', value: '3' },
+//     { label: 'Item 4', value: '4' },
+//     { label: 'Item 5', value: '5' },
+//     { label: 'Item 6', value: '6' },
+//     { label: 'Item 7', value: '7' },
+//     { label: 'Item 8', value: '8' },
+// ];
 
 type createTodoModalProps = {
     isVisible: boolean,
     onClose: () => void,
 };
 
+type AndroidMode = 'date' | 'time';
+
+const dimension = Dimensions.get('screen');
+
+const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit',
+    }).format(date);
+};
+
+const formatTime = (date: Date) => {
+    return new Intl.DateTimeFormat('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false, // 24-hour format
+    }).format(date);
+};
+
 function CreateTodoModal({
     isVisible,
     onClose,
 } : createTodoModalProps) {
+    const [datetime, setDatetime] = useState<Date>(new Date());
+    // const [date, setDate] = useState<string>();
+    // const [time, setTime] = useState<string>();
+
+    const [mode, setMode] = useState<AndroidMode>('date');
+    const [show, setShow] = useState(false);
+
     const display = useSharedValue<boolean>(isVisible);
     const swipeGesture = Gesture.Fling()
         .direction(Directions.DOWN).onEnd(() => runOnJS(onClose)());
@@ -40,16 +83,37 @@ function CreateTodoModal({
 
     const animatedModalContainer = useAnimatedStyle(() => ({
         width: '100%',
-        height: '100%',
+        minHeight: '60%',
         backgroundColor: '#f9fbfc',
         borderTopLeftRadius: 18,
         borderTopRightRadius: 18,
         elevation: 100,
         overflow: 'hidden',
         transform: [
-            { translateY: withSpring(display.value ? 25 : '100%') },
+            { translateY: withSpring(display.value ? 0 : '100%', { clamp: { max: 0 } }) },
         ],
     }));
+
+    const onChangeDatetime = (_event: any, selectedDate?: Date) => {
+        setShow(false);
+
+        if (selectedDate) {
+            setDatetime(selectedDate);
+        }
+    };
+
+    const showMode = (currentMode: AndroidMode) => {
+        setShow(true);
+        setMode(currentMode);
+    };
+
+    const showDatepicker = () => {
+        showMode('date');
+    };
+
+    const showTimepicker = () => {
+        showMode('time');
+    };
 
     return (
         <GestureDetector gesture={swipeGesture}>
@@ -60,8 +124,76 @@ function CreateTodoModal({
                             <Text style={styles.modalTitle}>New Task ToDo</Text>
                         </View>
                         <View style={styles.modalBody}>
-                            <TextInput label="Title Task" contentStyle={{ color: 'black' }} style={{ backgroundColor: '#eff3f4', borderRadius: 10 }} />
-                            <TextInput label="Description" multiline numberOfLines={3} contentStyle={{ color: 'black' }} style={{ backgroundColor: '#eff3f4', borderRadius: 10 }} />
+                            <TextInput
+                                label="Title"
+                                contentStyle={styles.modalInputContentStyle}
+                                style={styles.modalInputContainer}
+                            />
+
+                            <CategoryPicker />
+
+                            <TextInput
+                                label="Description"
+                                multiline
+                                numberOfLines={3}
+                                contentStyle={StyleSheet.flatten([styles.modalInputContentStyle, { height: 120 }])}
+                                style={styles.modalInputContainer}
+                            />
+
+                            <View style={styles.modalInputGroup}>
+                                <TouchableOpacity onPress={showDatepicker} activeOpacity={1}>
+                                    <TextInput
+                                        label="Date"
+                                        placeholder="dd/mm/yy"
+                                        multiline
+                                        editable={false}
+                                        numberOfLines={3}
+                                        value={formatDate(datetime)}
+                                        contentStyle={styles.modalInputContentStyle}
+                                        style={StyleSheet.flatten([styles.modalInputContainer, { width: dimension.width * 0.5 - 22.5 }])}
+                                    />
+                                </TouchableOpacity>
+
+                                <TouchableOpacity onPress={showTimepicker} activeOpacity={1}>
+                                    <TextInput
+                                        label="Time"
+                                        multiline
+                                        placeholder="hh:mm"
+                                        editable={false}
+                                        numberOfLines={3}
+                                        value={formatTime(datetime)}
+                                        contentStyle={styles.modalInputContentStyle}
+                                        style={StyleSheet.flatten([styles.modalInputContainer, { width: dimension.width * 0.5 - 22.5 }])}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+
+                            {/* <Dropdown
+                                // style={styles.dropdown}
+                                // placeholderStyle={styles.placeholderStyle}
+                                // selectedTextStyle={styles.selectedTextStyle}
+                                // inputSearchStyle={styles.inputSearchStyle}
+                                // iconStyle={styles.iconStyle}
+                                data={data}
+                                search
+                                maxHeight={300}
+                                labelField="label"
+                                valueField="value"
+                                placeholder="Select item"
+                                searchPlaceholder="Search..."
+                                onChange={() => {}}
+                            /> */}
+
+                            {
+                                show &&
+                                <DateTimePicker
+                                    testID="dateTimePicker"
+                                    value={datetime}
+                                    mode={mode}
+                                    is24Hour={true}
+                                    onChange={onChangeDatetime}
+                                />
+                            }
                         </View>
                         <View style={styles.modalFooter}>
                             <TouchableOpacity style={StyleSheet.flatten([styles.modalButton, { backgroundColor: 'white' }])}>
@@ -80,7 +212,7 @@ function CreateTodoModal({
 
 const styles = StyleSheet.create({
     modalContainer: {
-        height: '75%',
+        height: '100%',
         width: '100%',
         display: 'flex',
         justifyContent: 'space-between',
@@ -89,7 +221,7 @@ const styles = StyleSheet.create({
         padding: 15,
     },
     modalHeader: {
-        height: 80,
+        height: 60,
         width: '100%',
         display: 'flex',
         flexDirection: 'row',
@@ -104,13 +236,27 @@ const styles = StyleSheet.create({
         color: 'black',
     },
     modalBody: {
-        height: 450,
+        // height: 450,
+        maxHeight: 300,
         width: '100%',
         display: 'flex',
-        rowGap: 5,
+        rowGap: 10,
+    },
+    modalInputContentStyle: {
+        color: 'black',
+    },
+    modalInputContainer: {
+        backgroundColor: '#eff3f4',
+        borderRadius: 10,
+    },
+    modalInputGroup: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        columnGap: 10,
     },
     modalFooter: {
-        height: 60,
+        height: 50,
         width: '100%',
         display: 'flex',
         flexDirection: 'row',
