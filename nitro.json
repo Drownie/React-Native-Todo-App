@@ -1,0 +1,12 @@
+{
+    "$schema": "https://nitro.margelo.com/nitro.schema.json",
+    "cxxNamespace": ["drTodoDb"],
+    "ios": {
+      "iosModuleName": "drTodoDbModule"
+    },
+    "android": {
+      "androidNamespace": ["drTodoDb"],
+      "androidCxxLibName": "drTodoDbModule"
+    },
+    "autolinking": {}
+  }

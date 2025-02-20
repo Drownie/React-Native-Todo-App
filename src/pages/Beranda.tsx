@@ -1,17 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, ViewStyle, View, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '@react-native-vector-icons/fontawesome6';
+import { useNavigation } from '@react-navigation/native';
 
 // Import Components
 import ElevationButton from '../components/elevationButton';
-import CreateTodoModal from '../components/createTodoModal';
-// import SweetAlert from '../components/sweetAlert';
 import ProfileHeader from '../components/profileHeader';
 
 function Beranda() {
     const insets = useSafeAreaInsets();
-    const [isAlertVisible, setIsAlertVisible] = useState(false);
+    const navigation = useNavigation();
 
     const safePadding: ViewStyle = {
         paddingTop: insets.top,
@@ -22,7 +21,11 @@ function Beranda() {
 
     const onHandlePress = (val: boolean) => {
         console.log(`PRESSED => ${val}`);
-        setIsAlertVisible(val);
+
+        // @ts-ignore
+        navigation.navigate('todoModal', {
+            isEdit: false,
+        });
     };
 
     return (
@@ -31,7 +34,7 @@ function Beranda() {
             <View style={styles.elevationButtonWrapper}>
                 <ElevationButton onPress={() => onHandlePress(true)} style={styles.customElevationContainer}>
                     <Icon name="plus" iconStyle="solid" color={'white'} />
-                    <Text style={styles.customElevationButtonText}>Create New</Text>
+                    <Text style={styles.customElevationButtonText}>Create</Text>
                 </ElevationButton>
             </View>
 
@@ -39,7 +42,7 @@ function Beranda() {
             {/* <SweetAlert isVisible={isAlertVisible} onClose={() => setIsAlertVisible(false)} visibleSeconds={3000} displayText={'Data Submitted'} /> */}
 
             {/* Modal */}
-            <CreateTodoModal isVisible={isAlertVisible} onClose={() => setIsAlertVisible(false)} />
+            {/* <CreateTodoModal isVisible={isAlertVisible} onClose={() => setIsAlertVisible(false)} /> */}
 
             {/* Content */}
 
