@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TextInput } from 'react-native-paper';
-// import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 // Components
 import CategoryPicker from '../components/categoryPicker';
+import { useNavigation } from '@react-navigation/native';
 
 type todoModalNavigationParams = {
     isEdit: boolean,
@@ -36,7 +36,7 @@ const formatTime = (date: Date) => {
 function TodoModalScreen({route}: {route?: any}) {
     const insets = useSafeAreaInsets();
     const params: todoModalNavigationParams = route.params;
-    // const [title, setTitle] = useState(params.title);
+    const navigation = useNavigation();
 
     const safePadding: ViewStyle = {
         paddingTop: insets.top,
@@ -70,6 +70,10 @@ function TodoModalScreen({route}: {route?: any}) {
     const showTimepicker = () => {
         showMode('time');
     };
+
+    const onBack = useCallback(() => {
+        navigation.goBack();
+    }, [navigation]);
 
     return (
         <View style={[styles.container, safePadding]}>
@@ -137,7 +141,7 @@ function TodoModalScreen({route}: {route?: any}) {
                 </View>
             </ScrollView>
             <View style={styles.buttomWrapper}>
-                <TouchableOpacity style={StyleSheet.flatten([styles.modalButton, { backgroundColor: 'white' }])}>
+                <TouchableOpacity style={StyleSheet.flatten([styles.modalButton, { backgroundColor: 'white' }])} onPress={onBack} >
                     <Text style={StyleSheet.flatten([styles.modalButtonText, { color: '#2f84fd', fontWeight: '600' }])}>Cancel</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.modalButton}>
