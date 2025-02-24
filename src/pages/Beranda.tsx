@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 // Import Components
 import ElevationButton from '../components/elevationButton';
 import ProfileHeader from '../components/profileHeader';
+import OnProgressTodoPreview from '../components/onProgressTodoPreview';
 
 function Beranda() {
     const insets = useSafeAreaInsets();
@@ -30,6 +31,13 @@ function Beranda() {
 
     return (
         <View style={StyleSheet.flatten([styles.container, safePadding])}>
+            <ProfileHeader />
+
+            {/* Content */}
+            <View style={styles.contentWrapper}>
+                <OnProgressTodoPreview />
+            </View>
+
             {/* Elevation Button */}
             <View style={styles.elevationButtonWrapper}>
                 <ElevationButton onPress={() => onHandlePress(true)} style={styles.customElevationContainer}>
@@ -37,16 +45,6 @@ function Beranda() {
                     <Text style={styles.customElevationButtonText}>Create</Text>
                 </ElevationButton>
             </View>
-
-            {/* Sweet Alert */}
-            {/* <SweetAlert isVisible={isAlertVisible} onClose={() => setIsAlertVisible(false)} visibleSeconds={3000} displayText={'Data Submitted'} /> */}
-
-            {/* Modal */}
-            {/* <CreateTodoModal isVisible={isAlertVisible} onClose={() => setIsAlertVisible(false)} /> */}
-
-            {/* Content */}
-
-            <ProfileHeader />
         </View>
     );
 }
@@ -54,20 +52,22 @@ function Beranda() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        display: 'flex',
+        justifyContent: 'space-between',
         position: 'relative',
         backgroundColor: '#f5fafd',
     },
     elevationButtonWrapper: {
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
+        // position: 'absolute',
+        // bottom: 0,
+        // left: 0,
+        // right: 0,
         width: '100%',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 20,
-        paddingVertical: 10,
+        paddingVertical: 15,
     },
     customElevationContainer: {
         backgroundColor: 'royalblue',
@@ -83,6 +83,11 @@ const styles = StyleSheet.create({
     customElevationButtonText: {
         color: 'white',
         fontWeight: '400',
+    },
+    contentWrapper: {
+        // backgroundColor: 'lime',
+        flex: 1,
+        paddingHorizontal: 20,
     },
 });
 

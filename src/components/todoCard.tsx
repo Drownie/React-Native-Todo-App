@@ -41,9 +41,9 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
         paddingHorizontal: 10,
         columnGap: 8,
-        borderRadius: 8,
+        borderRadius: 5,
         backgroundColor: 'white',
-        elevation: 4,
+        elevation: 2,
     },
 });
 

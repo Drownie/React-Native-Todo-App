@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
         borderRadius: '50%',
         borderColor: 'lightgray',
         borderWidth: 1,
-        elevation: 4,
+        elevation: 1,
     },
 });
 
